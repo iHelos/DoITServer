@@ -15,7 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 # from django.contrib import admin
-from DoITproject.views import *
+from rest_framework import routers
+from DoITproject import views
+from rest_framework.authtoken import views as restViews
+
+router = routers.DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'groups', views.GroupViewSet)
+
+# Wire up our API using automatic URL routing.
+# Additionally, we include login URLs for the browsable API.
 urlpatterns = [
-    url(r'^login/$', sign, name='login'),
+    url(r'^auth/$', restViews.obtain_auth_token),
+    url(r'^signup/$', views.sign_up),
+
+    url(r'^user/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
+
+    url(r'^docs/', include('rest_framework_docs.urls')),
 ]

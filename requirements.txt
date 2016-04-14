@@ -8,3 +8,5 @@ djangorestframework
 mpmath
 objectpath
 python-usernames
+drfdocs
+status
