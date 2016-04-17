@@ -19,17 +19,15 @@ from rest_framework import routers
 from DoITproject import views
 from rest_framework.authtoken import views as restViews
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
-
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     url(r'^auth/$', restViews.obtain_auth_token),
     url(r'^signup/$', views.sign_up),
-
-    url(r'^user/(?P<pk>[0-9]+)/$', views.UserDetail.as_view()),
-
-    url(r'^docs/', include('rest_framework_docs.urls')),
+    url(r'^task/create/$', views.task_create),
+    url(r'^task/in/$', views.AllTasksInDetail.as_view()),
+    url(r'^task/in/(?P<pk>[0-9]+)/$', views.TaskInDetail.as_view()),
+    url(r'^task/out/$', views.AllTasksOutDetail.as_view()),
+    url(r'^task/out/(?P<pk>[0-9]+)/$', views.TaskOutDetail.as_view()),
+    url(r'^$', include('rest_framework_docs.urls')),
 ]

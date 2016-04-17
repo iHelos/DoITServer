@@ -1,6 +1,7 @@
 # coding=utf-8
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
+from models import Task
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -28,3 +29,25 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ('name',)
+
+class CreateTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('name', 'text', 'price', 'user_reciever')
+
+    def create(self, validated_data):
+        task = Task(
+            name = validated_data['name'],
+            text = validated_data['text'],
+            price = validated_data['price'],
+            user_reciever = validated_data['user_reciever'],
+            user_creator = validated_data['owner'],
+            isCompleted = False
+        )
+        task.save()
+        return task
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ('user_reciever', 'text', 'price')
