@@ -10,3 +10,5 @@ objectpath
 python-usernames
 drfdocs
 status
+django-smtp-ssl
+django-gcm

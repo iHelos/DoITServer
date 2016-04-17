@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'DoITproject',
     'rest_framework',
     'rest_framework_docs',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'gcm'
 
 )
 
@@ -114,9 +115,20 @@ USE_L10N = True
 USE_TZ = True
 
 
+EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST='smtp.mail.ru'
+EMAIL_PORT=2525
+EMAIL_HOST_USER='registration@questmanager.ru'
+DEFAULT_FROM_EMAIL = 'registration@questmanager.ru'
+SERVER_EMAIL = 'registration@questmanager.ru'
+EMAIL_HOST_PASSWORD='&O5PW8Fmefkp'
+EMAIL_USE_TLS=True
+
+GCM_APIKEY = 'AIzaSyC3p1TA8In2GPqZAkpuxA9wabMdKkB-4hg'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-STATIC_ROOT = '/projects/DoITServer/static/'
+#STATIC_ROOT = '/projects/DoITServer/static/'
 STATIC_URL = '/static/'
 # TEMPLATE_DIRS = (
 #     os.path.join(BASE_DIR,  'templates'),

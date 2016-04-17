@@ -18,6 +18,7 @@ from django.conf.urls import include, url
 from rest_framework import routers
 from DoITproject import views
 from rest_framework.authtoken import views as restViews
+from django.conf.urls import include, url
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
@@ -29,5 +30,6 @@ urlpatterns = [
     url(r'^task/in/(?P<pk>[0-9]+)/$', views.TaskInDetail.as_view()),
     url(r'^task/out/$', views.AllTasksOutDetail.as_view()),
     url(r'^task/out/(?P<pk>[0-9]+)/$', views.TaskOutDetail.as_view()),
+    url(r'', include('gcm.urls')),
     url(r'^$', include('rest_framework_docs.urls')),
 ]

@@ -1,6 +1,7 @@
 # coding=utf-8
 from xml import parsers
 from django.contrib.auth.models import User, Group
+from django.core import mail
 from django.http import JsonResponse, Http404
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
@@ -8,6 +9,8 @@ from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from django.core.mail import EmailMessage, send_mail
 
 # Create your views here.
 from DoITproject.models import Task
@@ -21,8 +24,9 @@ class SignUp(APIView):
     permission_classes = ()
     # parser_classes = (parsers.FormParser, parsers.MultiPartParser, parsers.JSONParser,)
     serializer_class = CreateUserSerializer
-
     def post(self, request, *args, **kwargs):
+        send_mail('Subject here', 'Here is the message.', 'registration@questmanager.ru',
+            ['ihelos.ermakov@gmail.com'], fail_silently=False)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'token': Token.objects.create(user = serializer.save()).key})
