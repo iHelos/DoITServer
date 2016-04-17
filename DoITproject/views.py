@@ -26,7 +26,7 @@ class SignUp(APIView):
     serializer_class = CreateUserSerializer
     def post(self, request, *args, **kwargs):
         send_mail('Subject here', 'Here is the message.', 'registration@questmanager.ru',
-            ['ihelos.ermakov@gmail.com'], fail_silently=False)
+             ['ihelos.ermakov@gmail.com'], fail_silently=False)
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'token': Token.objects.create(user = serializer.save()).key})
