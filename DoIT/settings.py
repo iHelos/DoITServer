@@ -116,7 +116,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-STATIC_ROOT = '/usr/home/ann/DoITServer/static'
+STATIC_ROOT = '/projects/DoITServer/static/'
 STATIC_URL = '/static/'
 # TEMPLATE_DIRS = (
 #     os.path.join(BASE_DIR,  'templates'),
