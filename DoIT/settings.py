@@ -41,8 +41,9 @@ INSTALLED_APPS = (
     'rest_framework_docs',
     'rest_framework.authtoken',
     'gcm'
-
 )
+
+GCM_APIKEY = "AIzaSyC3p1TA8In2GPqZAkpuxA9wabMdKkB-4hg"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -123,8 +124,6 @@ DEFAULT_FROM_EMAIL = 'registration@questmanager.ru'
 SERVER_EMAIL = 'registration@questmanager.ru'
 EMAIL_HOST_PASSWORD='&O5PW8Fmefkp'
 EMAIL_USE_TLS=True
-
-GCM_APIKEY = 'AIzaSyC3p1TA8In2GPqZAkpuxA9wabMdKkB-4hg'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

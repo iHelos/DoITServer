@@ -12,3 +12,10 @@ class Task(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class WaitConfirm(models.Model):
+    password = models.TextField()
+    devid = models.TextField()
+
+    def __unicode__(self):
+        return self.name

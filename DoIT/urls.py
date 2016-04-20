@@ -22,14 +22,18 @@ from django.conf.urls import include, url
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
+from DoITproject.views import device_register, confirm_registration
+
 urlpatterns = [
-    url(r'^auth/$', restViews.obtain_auth_token),
-    url(r'^signup/$', views.sign_up),
+    # url(r'^auth/$', restViews.obtain_auth_token),
+    # url(r'^signup/$', views.sign_up),
     url(r'^task/create/$', views.task_create),
     url(r'^task/in/$', views.AllTasksInDetail.as_view()),
     url(r'^task/in/(?P<pk>[0-9]+)/$', views.TaskInDetail.as_view()),
     url(r'^task/out/$', views.AllTasksOutDetail.as_view()),
     url(r'^task/out/(?P<pk>[0-9]+)/$', views.TaskOutDetail.as_view()),
+    url(r'^registerDevice/$', device_register),
+    url(r'^confirm/$', confirm_registration),
     url(r'', include('gcm.urls')),
     url(r'^$', include('rest_framework_docs.urls')),
 ]
