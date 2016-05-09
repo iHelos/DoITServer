@@ -144,7 +144,7 @@ class DeviceRegistrationView(APIView):
                  [email], fail_silently=False)
             else:
                 user = User.objects.get(email = email)
-                token = Token.objects.get_or_create(user=user)
+                token = Token.objects.get_or_create(user=user)[0]
                 return Response({'token': token.key})
 
         except:
@@ -168,7 +168,7 @@ def confirm_registration(request):
         device.save()
 
         user = User.objects.get(email = device.name)
-        token = Token.objects.get_or_create(user=user)
+        token = Token.objects.get_or_create(user=user)[0]
 
         device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
         return HttpResponse('good')
