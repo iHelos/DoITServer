@@ -164,7 +164,7 @@ def confirm_registration(request):
         confirm = WaitConfirm.objects.get(devid = reg_id, password = password)
         Device = get_device_model()
         device = Device.objects.get(reg_id = reg_id)
-        device.is_active = 1
+        device.is_active = True
         device.save()
 
         user = User.objects.get(email = device.name)
