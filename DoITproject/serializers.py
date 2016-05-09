@@ -83,7 +83,7 @@ class DeviceRegistration(serializers.Serializer):
         devices = Device.objects.filter(reg_id = reg_id)
         if(len(devices) != 0):
             device = Device.objects.get(reg_id = reg_id)
-            return True, password, device.dev_id, email
+            return False, password, device.dev_id, email
 
         device = Device(
             name = email,
@@ -97,4 +97,4 @@ class DeviceRegistration(serializers.Serializer):
             password = password
         )
         waitConfirm.save()
-        return False, password, reg_id, email
+        return True, password, reg_id, email
