@@ -50,6 +50,7 @@ class TaskCreate(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self.request.user)
+        
         return Response({'task': serializer.data})
 task_create = TaskCreate.as_view()
 
@@ -131,15 +132,21 @@ class DeviceRegistrationView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            password, dev_id, email = serializer.save()
-            value = signing.dumps({dev_id: password})
+            created, password, dev_id, email = serializer.save()
+            if created:
+                value = signing.dumps({dev_id: password})
 
-            confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
-            send_mail('Регистрация QuestManager',
-                      'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
-                      'перейдите по данной ссылке:\n {}'.format(confirm_url),
-                      'registration@questmanager.ru',
-             [email], fail_silently=False)
+                confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
+                send_mail('Регистрация QuestManager',
+                          'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
+                          'перейдите по данной ссылке:\n {}'.format(confirm_url),
+                          'registration@questmanager.ru',
+                 [email], fail_silently=False)
+            else:
+                user = User.objects.get(email = email)
+                token = Token.objects.get_or_create(user=user)
+                return Response({'token': token.key})
+
         except:
             traceback.print_exc()
             raise Http404
@@ -159,9 +166,9 @@ def confirm_registration(request):
         device.save()
 
         user = User.objects.get(email = device.name)
-        Token.objects.get_or_create(user=user)
+        token = Token.objects.get_or_create(user=user)
 
-        device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':''}, delay_while_idle=True)
+        device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
         return HttpResponse('good')
     except:
         return HttpResponse('bad')
