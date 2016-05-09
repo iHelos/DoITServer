@@ -50,7 +50,7 @@ class TaskCreate(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(owner=self.request.user)
-        
+
         return Response({'task': serializer.data})
 task_create = TaskCreate.as_view()
 
@@ -171,7 +171,7 @@ def confirm_registration(request):
         device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
         return HttpResponse('good')
     except:
-        return HttpResponse('bad')
+        return HttpResponse(traceback.format_exc())
 
 @receiver(signals.device_registered)
 def my_callback(sender, device, request, **kwargs):
