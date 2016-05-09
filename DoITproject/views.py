@@ -161,6 +161,7 @@ def confirm_registration(request):
         reg_id, password = secret.items()[0]
         confirm = WaitConfirm.objects.get(devid = reg_id, password = password)
         Device = get_device_model()
+        print(reg_id)
         device = Device.objects.get(reg_id = reg_id)
         device.is_active = 1
         device.save()
