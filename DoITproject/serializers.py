@@ -78,20 +78,23 @@ class DeviceRegistration(serializers.Serializer):
         Device = get_device_model()
         # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
         # dev.delete()
-        devices = Device.objects.filter(reg_id = validated_data['reg_id'])
+
+        reg_id = validated_data['reg_id']
+        devices = Device.objects.filter(reg_id = reg_id)
         if(len(devices) != 0):
-            device = Device.objects.get(reg_id = validated_data['reg_id'])
+            device = Device.objects.get(reg_id = reg_id)
             return True, password, device.dev_id, email
+
         device = Device(
             name = email,
-            reg_id = validated_data['reg_id'],
-            dev_id = validated_data['reg_id']
+            reg_id = reg_id,
+            dev_id = reg_id
         )
         device.save()
 
         waitConfirm = WaitConfirm(
-            devid = device.dev_id,
+            devid = reg_id,
             password = password
         )
         waitConfirm.save()
-        return False, password, device.dev_id, email
+        return False, password, reg_id, email

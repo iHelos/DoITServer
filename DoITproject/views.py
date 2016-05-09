@@ -132,9 +132,9 @@ class DeviceRegistrationView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            created, password, dev_id, email = serializer.save()
+            created, password, reg_id, email = serializer.save()
             if created:
-                value = signing.dumps({dev_id: password})
+                value = signing.dumps({reg_id: password})
 
                 confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
                 send_mail('Регистрация QuestManager',
@@ -158,10 +158,10 @@ def confirm_registration(request):
         signer = Signer()
         password = request.GET['pass']
         secret = signing.loads(password)
-        dev_id, password = secret.items()[0]
-        confirm = WaitConfirm.objects.get(devid = dev_id, password = password)
+        reg_id, password = secret.items()[0]
+        confirm = WaitConfirm.objects.get(devid = reg_id, password = password)
         Device = get_device_model()
-        device = Device.objects.get(dev_id = dev_id)
+        device = Device.objects.get(reg_id = reg_id)
         device.is_active = 1
         device.save()
 
