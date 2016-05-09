@@ -66,19 +66,29 @@ class DeviceRegistration(serializers.Serializer):
 
     @transaction.atomic
     def create(self, validated_data):
+
+        email = validated_data['email']
+        password = User.objects.make_random_password()
+
+        user = User.objects.filter(email = email)
+        if(len(user) == 0):
+            newUser = User(email=email, password = password, username = email)
+            newUser.save()
+
         Device = get_device_model()
+        # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
+        # dev.delete()
+
         device = Device(
-            name = validated_data['email'],
+            name = email,
             reg_id = validated_data['reg_id'],
             dev_id = validated_data['reg_id']
         )
         device.save()
-
-        password = User.objects.make_random_password()
 
         waitConfirm = WaitConfirm(
             devid = device.dev_id,
             password = password
         )
         waitConfirm.save()
-        return password, device.dev_id
+        return password, device.dev_id, email

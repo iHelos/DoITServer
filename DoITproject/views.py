@@ -1,5 +1,6 @@
 # coding=utf-8
 import traceback
+from django.contrib.auth.models import User
 from django.core import signing
 from django.dispatch import receiver
 from django.http import  Http404, HttpResponse
@@ -130,7 +131,7 @@ class DeviceRegistrationView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            password, dev_id = serializer.save()
+            password, dev_id, email = serializer.save()
             value = signing.dumps({dev_id: password})
 
             confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
@@ -138,9 +139,10 @@ class DeviceRegistrationView(APIView):
                       'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
                       'перейдите по данной ссылке:\n {}'.format(confirm_url),
                       'registration@questmanager.ru',
-             ['ihelos.ermakov@gmail.com'], fail_silently=False)
+             [email], fail_silently=False)
         except:
-            return Response({'result': 'error'})
+            traceback.print_exc()
+            raise Http404
         return Response({'result': 'check email'})
 device_register = DeviceRegistrationView.as_view()
 
@@ -152,13 +154,17 @@ def confirm_registration(request):
         dev_id, password = secret.items()[0]
         confirm = WaitConfirm.objects.get(devid = dev_id, password = password)
         Device = get_device_model()
-        device = Device.objects.get(dev_id= dev_id)
+        device = Device.objects.get(dev_id = dev_id)
         device.is_active = 1
         device.save()
-        device.send_message({'message':'Ваше устройство успешно подтверждено!'}, delay_while_idle=True)
+
+        user = User.objects.get(email = device.name)
+        Token.objects.get_or_create(user=user)
+
+        device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':''}, delay_while_idle=True)
         return HttpResponse('good')
     except:
-        return HttpResponse('fuck')
+        return HttpResponse('bad')
 
 @receiver(signals.device_registered)
 def my_callback(sender, device, request, **kwargs):
