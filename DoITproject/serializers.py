@@ -83,6 +83,8 @@ class DeviceRegistration(serializers.Serializer):
         devices = Device.objects.filter(reg_id = reg_id)
         if(len(devices) != 0):
             device = Device.objects.get(reg_id = reg_id)
+            device.name = email
+            device.save()
             return False, password, device.dev_id, email
 
         device = Device(
@@ -98,3 +100,14 @@ class DeviceRegistration(serializers.Serializer):
         )
         waitConfirm.save()
         return True, password, reg_id, email
+
+class GCMToken(serializers.Serializer):
+    reg_id = serializers.CharField()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        Device = get_device_model()
+        reg_id = validated_data['reg_id']
+        device = Device.objects.get(reg_id = reg_id)
+        user = User.objects.get(email = device.name)
+        return user

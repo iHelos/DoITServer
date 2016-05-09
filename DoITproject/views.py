@@ -16,7 +16,7 @@ from django.core.mail import EmailMessage, send_mail
 # Create your views here.
 from DoITproject.models import Task, WaitConfirm
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration
+    DeviceRegistration, GCMToken
 
 
 class SignUp(APIView):
@@ -133,25 +133,50 @@ class DeviceRegistrationView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             created, password, reg_id, email = serializer.save()
-            if created:
-                value = signing.dumps({reg_id: password})
+            # if created:
+            value = signing.dumps({reg_id: password})
 
-                confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
-                send_mail('Регистрация QuestManager',
-                          'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
-                          'перейдите по данной ссылке:\n {}'.format(confirm_url),
-                          'registration@questmanager.ru',
-                 [email], fail_silently=False)
-            else:
-                user = User.objects.get(email = email)
-                token = Token.objects.get_or_create(user=user)[0]
-                return Response({'token': token.key})
+            confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
+            send_mail('Регистрация QuestManager',
+                      'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
+                      'перейдите по данной ссылке:\n {}'.format(confirm_url),
+                      'registration@questmanager.ru',
+             [email], fail_silently=False)
+            # else:
+            #     value = signing.dumps({reg_id: password})
+            #
+            #     confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
+            #     send_mail('Регистрация QuestManager',
+            #               'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
+            #               'перейдите по данной ссылке:\n {}'.format(confirm_url),
+            #               'registration@questmanager.ru',
+            #      [email], fail_silently=False)
 
         except:
             traceback.print_exc()
             raise Http404
         return Response({'result': 'check email'})
 device_register = DeviceRegistrationView.as_view()
+
+class GetAuthTokenView(APIView):
+    """
+    Регистрация устройства
+    """
+    throttle_classes = ()
+    permission_classes = ()
+    serializer_class = GCMToken
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = serializer.save()
+            token = Token.objects.get_or_create(user=user)[0]
+            return Response({'token': token.key})
+        except:
+            traceback.print_exc()
+            raise Http404
+auth_token = GetAuthTokenView.as_view()
 
 def confirm_registration(request):
     try:
