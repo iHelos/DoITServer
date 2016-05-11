@@ -2,6 +2,7 @@
 import traceback
 from django.contrib.auth.models import User
 from django.core import signing
+from django.db import transaction
 from django.dispatch import receiver
 from django.http import  Http404, HttpResponse
 from rest_framework.authtoken.models import Token
@@ -132,16 +133,16 @@ class DeviceRegistrationView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            created, password, reg_id, email = serializer.save()
+            password, device = serializer.save()
             # if created:
-            value = signing.dumps({reg_id: password})
+            value = signing.dumps({device.dev_id: password})
 
             confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
             send_mail('Регистрация QuestManager',
                       'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
                       'перейдите по данной ссылке:\n {}'.format(confirm_url),
                       'registration@questmanager.ru',
-             [email], fail_silently=False)
+             [device.name], fail_silently=False)
             # else:
             #     value = signing.dumps({reg_id: password})
             #
@@ -178,19 +179,21 @@ class GetAuthTokenView(APIView):
             raise Http404
 auth_token = GetAuthTokenView.as_view()
 
+@transaction.atomic
 def confirm_registration(request):
     try:
         signer = Signer()
         password = request.GET['pass']
         secret = signing.loads(password)
-        reg_id, password = secret.items()[0]
-        print(reg_id)
-        print(password)
-        confirm = WaitConfirm.objects.get(devid = reg_id, password = password)
+        dev_id, password = secret.items()[0]
+
+        confirm = WaitConfirm.objects.get(devid = dev_id, password = password)
         Device = get_device_model()
-        device = Device.objects.get(reg_id = reg_id)
+        device = Device.objects.get(dev_id = dev_id)
         device.is_active = True
         device.save()
+
+        confirm.delete()
 
         user = User.objects.get(email = device.name)
         token = Token.objects.get_or_create(user=user)[0]

@@ -63,11 +63,15 @@ class TaskSerializer(serializers.ModelSerializer):
 class DeviceRegistration(serializers.Serializer):
     email = serializers.EmailField()
     reg_id = serializers.CharField()
+    dev_id = serializers.CharField()
 
     @transaction.atomic
     def create(self, validated_data):
 
         email = validated_data['email']
+        reg_id = validated_data['reg_id']
+        dev_id = validated_data['dev_id']
+
         password = User.objects.make_random_password()
 
         user = User.objects.filter(email = email)
@@ -78,28 +82,26 @@ class DeviceRegistration(serializers.Serializer):
         Device = get_device_model()
         # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
         # dev.delete()
-
-        reg_id = validated_data['reg_id']
-        devices = Device.objects.filter(reg_id = reg_id)
+        devices = Device.objects.filter(dev_id = dev_id)
+        device = None
         if(len(devices) != 0):
             device = Device.objects.get(reg_id = reg_id)
             device.name = email
             device.save()
-            return False, password, device.dev_id, email
-
-        device = Device(
-            name = email,
-            reg_id = reg_id,
-            dev_id = reg_id
-        )
-        device.save()
+        else:
+            device = Device(
+                name = email,
+                reg_id = reg_id,
+                dev_id = reg_id
+            )
+            device.save()
 
         waitConfirm = WaitConfirm(
-            devid = reg_id,
+            devid = dev_id,
             password = password
         )
         waitConfirm.save()
-        return True, password, reg_id, email
+        return password, device
 
 class GCMToken(serializers.Serializer):
     reg_id = serializers.CharField()
