@@ -85,14 +85,14 @@ class DeviceRegistration(serializers.Serializer):
         devices = Device.objects.filter(dev_id = dev_id)
         device = None
         if(len(devices) != 0):
-            device = Device.objects.get(reg_id = reg_id)
+            device = Device.objects.get(dev_id = dev_id)
             device.name = email
             device.save()
         else:
             device = Device(
                 name = email,
                 reg_id = reg_id,
-                dev_id = reg_id
+                dev_id = dev_id
             )
             device.save()
 
