@@ -118,6 +118,6 @@ class GCMToken(serializers.Serializer):
     def create(self, validated_data):
         Device = get_device_model()
         reg_id = validated_data['reg_id']
-        device = Device.objects.get(reg_id = reg_id)
+        device = Device.objects.get(reg_id = reg_id, is_active=1)
         user = User.objects.get(email = device.name)
         return user
