@@ -65,6 +65,14 @@ class DeviceRegistration(serializers.Serializer):
     reg_id = serializers.CharField()
     dev_id = serializers.CharField()
 
+    def __init__(self, *args, **kwargs):
+        super(DeviceRegistration, self).__init__(*args, **kwargs)
+
+        self.fields['email'].default_error_messages['blank'] = u'0'
+        self.fields['email'].default_error_messages['invalid'] = u'1'
+        self.fields['email'].default_error_messages['required'] = u'2'
+
+
     @transaction.atomic
     def create(self, validated_data):
 
