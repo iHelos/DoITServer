@@ -5,6 +5,7 @@ from django.core import signing
 from django.db import transaction
 from django.dispatch import receiver
 from django.http import  Http404, HttpResponse
+from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -15,9 +16,9 @@ from django.core.signing import Signer
 from django.core.mail import EmailMessage, send_mail
 
 # Create your views here.
-from DoITproject.models import Task, WaitConfirm
+from DoITproject.models import Task, WaitConfirm, UserAccount
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration, GCMToken
+    DeviceRegistration, GCMToken, CreateTask
 
 
 class SignUp(APIView):
@@ -45,14 +46,26 @@ class TaskCreate(APIView):
     """
     Создание квеста
     """
-    serializer_class = CreateTaskSerializer
+    serializer_class = CreateTask
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(owner=self.request.user)
-
-        return Response({'task': serializer.data})
+        try:
+            task,msg = serializer.save(owner=self.request.user)
+            if(task):
+                Device = get_device_model()
+                device = Device.objects.get(name = task.user_reciever.email)
+                device.send_message(
+                    {'title':task.name[:1000], 'text':task.text[:1000], 'user':task.user_creator.email},
+                    delay_while_idle=True
+                )
+                return Response({'task': "success"})
+            else:
+                return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            traceback.print_exc()
+            return Response({'detail': "no detail"}, status=status.HTTP_400_BAD_REQUEST)
 task_create = TaskCreate.as_view()
 
 class TaskInDetail(APIView):

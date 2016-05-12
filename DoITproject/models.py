@@ -9,6 +9,7 @@ class Task(models.Model):
     user_creator = models.ForeignKey(User, related_name='creator')
     user_reciever = models.ForeignKey(User, related_name='reciever')
     isCompleted = models.BooleanField()
+    date = models.CharField(max_length=10)
 
     def __unicode__(self):
         return self.name
@@ -16,6 +17,13 @@ class Task(models.Model):
 class WaitConfirm(models.Model):
     password = models.TextField()
     devid = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+class UserAccount(models.Model):
+    bank = models.IntegerField()
+    user = models.ForeignKey(User)
 
     def __unicode__(self):
         return self.name

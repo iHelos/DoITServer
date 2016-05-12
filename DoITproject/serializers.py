@@ -1,7 +1,8 @@
 # coding=utf-8
+import datetime
 from django.contrib.auth.models import User, Group
 from rest_framework import serializers
-from models import Task, WaitConfirm
+from models import Task, WaitConfirm, UserAccount
 from gcm.models import get_device_model
 from django.db import transaction
 
@@ -84,8 +85,7 @@ class DeviceRegistration(serializers.Serializer):
 
         user = User.objects.filter(email = email)
         if(len(user) == 0):
-            newUser = User(email=email, password = password, username = email)
-            newUser.save()
+            user, = create_user(email, password)
 
         Device = get_device_model()
         # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
@@ -123,3 +123,74 @@ class GCMToken(serializers.Serializer):
         device = Device.objects.get(reg_id = reg_id, is_active=1)
         user = User.objects.get(email = device.name)
         return user
+
+class CreateTask(serializers.Serializer):
+    title = serializers.CharField()
+    text = serializers.CharField()
+    price = serializers.IntegerField()
+    reciever = serializers.EmailField()
+    year = serializers.IntegerField()
+    month = serializers.IntegerField()
+    day = serializers.IntegerField()
+
+    def __init__(self, *args, **kwargs):
+        super(CreateTask, self).__init__(*args, **kwargs)
+
+        self.fields['reciever'].default_error_messages['blank'] = u'0'
+        self.fields['reciever'].default_error_messages['invalid'] = u'1'
+        self.fields['reciever'].default_error_messages['required'] = u'2'
+        self.fields['title'].default_error_messages['blank'] = u'0'
+        self.fields['title'].default_error_messages['required'] = u'1'
+        self.fields['text'].default_error_messages['blank'] = u'0'
+        self.fields['text'].default_error_messages['required'] = u'1'
+        self.fields['price'].default_error_messages['invalid'] = u'0'
+        self.fields['price'].default_error_messages['required'] = u'1'
+        self.fields['year'].default_error_messages['invalid'] = u'0'
+        self.fields['year'].default_error_messages['required'] = u'1'
+        self.fields['month'].default_error_messages['invalid'] = u'0'
+        self.fields['month'].default_error_messages['required'] = u'1'
+        self.fields['day'].default_error_messages['invalid'] = u'0'
+        self.fields['day'].default_error_messages['required'] = u'1'
+
+    @transaction.atomic
+    def create(self, validated_data):
+
+        email = validated_data['reciever']
+        title = validated_data['title']
+        text = validated_data['text']
+        price = validated_data['price']
+        year = validated_data['year']
+        month = validated_data['month']
+        day = validated_data['day']
+
+        user_creator = validated_data['owner']
+
+        user = User.objects.get(email = email)
+        userbank = UserAccount.objects.get(user_id = user.pk)
+
+        if userbank.bank < price:
+            return None, "0"
+
+        date = datetime.date(year, month, day)
+        if date < date.today():
+            return None, "1"
+
+        userbank.bank-=price
+        userbank.save()
+
+        task = Task(name = title, text = text, price = price, user_reciever = user, user_creator = user_creator, isCompleted = 0, date = str(date))
+        task.save()
+        return task, ""
+
+
+@transaction.atomic
+def create_user (email, password = None):
+    user = User(
+                email=email,
+                username=email,
+                password=password
+            )
+    user.save()
+    userbank = UserAccount(user = user, userbank=10000)
+    userbank.save()
+    return user, userbank
