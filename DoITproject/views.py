@@ -211,7 +211,8 @@ def confirm_registration(request):
         user = User.objects.get(email = device.name)
         token = Token.objects.get_or_create(user=user)[0]
 
-        device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
+        asd = device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
+        print(asd)
         return HttpResponse('good')
     except:
         return HttpResponse(traceback.format_exc())
