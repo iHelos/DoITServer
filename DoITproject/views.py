@@ -57,7 +57,7 @@ class TaskCreate(APIView):
                 Device = get_device_model()
                 device = Device.objects.get(name = task.user_reciever.email)
                 device.send_message(
-                    {'title':task.name[:1000], 'text':task.text[:1000], 'user':task.user_creator.email},
+                    {'type':'1','title':task.name[:1000], 'text':task.text[:1000], 'user':task.user_creator.email},
                     delay_while_idle=True
                 )
                 return Response({'task': "success"})
@@ -211,7 +211,7 @@ def confirm_registration(request):
         user = User.objects.get(email = device.name)
         token = Token.objects.get_or_create(user=user)[0]
 
-        asd = device.send_message({'message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
+        asd = device.send_message({'type':'0','message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
         print(asd)
         return HttpResponse('good')
     except:
