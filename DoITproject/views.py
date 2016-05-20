@@ -57,7 +57,7 @@ class TaskCreate(APIView):
                 Device = get_device_model()
                 device = Device.objects.get(name = task.user_reciever.email)
                 device.send_message(
-                    {'type':'1','title':task.name[:1000], 'text':task.text[:1000], 'user':task.user_creator.email},
+                    {'type':'1','id':task.id, 'title':task.name[:1000], 'text':task.text[:1000], 'user':task.user_creator.email},
                     delay_while_idle=True
                 )
                 return Response({'task': "success"})
