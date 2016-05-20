@@ -65,7 +65,7 @@ class TaskCreate(APIView):
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
         except:
             traceback.print_exc()
-            return Response({'detail': "no detail"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail': traceback.format_exc()}, status=status.HTTP_400_BAD_REQUEST)
 task_create = TaskCreate.as_view()
 
 class TaskInDetail(APIView):
