@@ -55,7 +55,7 @@ class TaskCreate(APIView):
             task,msg = serializer.save(owner=self.request.user)
             if(task):
                 Device = get_device_model()
-                device = Device.objects.get(name = task.user_reciever.email)
+                device = Device.objects.filter(name = task.user_reciever.email)
                 device.send_message(
                     {'type':'1','id':task.id, 'title':task.name, 'text':task.text, 'user':task.user_creator.email, 'date':task.date, 'price':task.price},
                     delay_while_idle=True
