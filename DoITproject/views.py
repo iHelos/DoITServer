@@ -60,7 +60,7 @@ class TaskCreate(APIView):
                     {'type':'1','id':task.id, 'title':task.name, 'text':task.text, 'user':task.user_creator.email, 'date':task.date, 'price':task.price},
                     delay_while_idle=True
                 )
-                return Response({'task': "success"})
+                return Response({'task': task.id})
             else:
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
         except:
