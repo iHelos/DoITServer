@@ -11,6 +11,9 @@ class Task(models.Model):
     isCompleted = models.BooleanField()
     date = models.CharField(max_length=10)
 
+    inputHash = models.TextField()
+    outputHash = models.TextField()
+
     def __unicode__(self):
         return self.name
 

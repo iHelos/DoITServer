@@ -179,7 +179,21 @@ class CreateTask(serializers.Serializer):
         userbank.bank-=price
         userbank.save()
 
-        task = Task(name = title, text = text, price = price, user_reciever = user, user_creator = user_creator, isCompleted = 0, date = str(date))
+        inputHash = 0
+        previousInputTask = Task.objects.filter(user_reciever = user).order_by('-id')
+        if len(previousInputTask) != 0:
+            temp = previousInputTask[0]
+            code_text = temp.inputHash + temp.name
+            inputHash = java_string_hashcode(code_text)
+
+        outputHash = 0
+        previousOutputTask = Task.objects.filter(user_creator = user_creator).order_by('-id')
+        if len(previousOutputTask) != 0:
+            temp = previousOutputTask[0]
+            code_text = temp.outputHash + temp.name
+            outputHash = java_string_hashcode(code_text)
+
+        task = Task(name = title, text = text, price = price, user_reciever = user, user_creator = user_creator, isCompleted = 0, date = str(date), inputHash = inputHash, outputHash = outputHash)
         task.save()
         return task, ""
 
@@ -195,3 +209,10 @@ def create_user (email, password = None):
     userbank = UserAccount(user = user, userbank=10000)
     userbank.save()
     return user, userbank
+
+
+def java_string_hashcode(s):
+    h = 0
+    for c in s:
+        h = (31 * h + ord(c)) & 0xFFFFFFFF
+    return ((h + 0x80000000) & 0xFFFFFFFF) - 0x80000000
