@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage, send_mail
 # Create your views here.
 from DoITproject.models import Task, WaitConfirm, UserAccount
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration, GCMToken, CreateTask
+    DeviceRegistration, GCMToken, CreateTask, TaskSerializer
 
 
 class SignUp(APIView):
@@ -72,17 +72,19 @@ task_create = TaskCreate.as_view()
 
 class TaskInDetail(APIView):
     """
-    API получения одного входящих квестов
+    API получения всех входящих квестов по хэшу
     """
-    def get_object(self, pk):
+    def get_object(self, hash, user):
         try:
-            return Task.objects.get(pk=pk, user_reciever = self.request.user)
+            checkpoint_task = Task.objects.get(user_creator = user, inputHash = hash)
+
+            return Task.objects.filter(id__gt = checkpoint_task.pk, user_creator = user)
         except Task.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        task = self.get_object(pk)
-        task = CreateTaskSerializer(task)
+    def get(self, request, hash, format=None):
+        task = self.get_object(hash, request.user)
+        task = TaskSerializer(task, many=True)
         return Response(task.data)
 
 
@@ -103,17 +105,17 @@ class AllTasksInDetail(APIView):
 
 class TaskOutDetail(APIView):
     """
-    API получения конкретного исходящего квеста
+    API получения исходящих квестов по хэшу
     """
-    def get_object(self, pk):
+    def get_object(self, hash, user):
         try:
-            return Task.objects.get(pk=pk, user_creator = self.request.user)
+            return Task.objects.filter(id__gt = Task.objects.get(user_creator = user, outputHash = hash).pk, user_creator = user)
         except Task.DoesNotExist:
             raise Http404
 
-    def get(self, request, pk, format=None):
-        task = self.get_object(pk)
-        task = CreateTaskSerializer(task)
+    def get(self, request, hash, format=None):
+        task = self.get_object(hash, request.user)
+        task = TaskSerializer(task, many=True)
         return Response(task.data)
 
 
