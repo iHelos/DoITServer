@@ -189,8 +189,12 @@ class GetAuthTokenView(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             user = serializer.save()
+            userBank = UserAccount.objects.get(user = user)
             token = Token.objects.get_or_create(user=user)[0]
-            return Response({'token': token.key})
+            return Response({
+                'token': token.key,
+            'bank':userBank.bank
+            })
         except:
             traceback.print_exc()
             raise Http404
@@ -213,9 +217,10 @@ def confirm_registration(request):
         confirm.delete()
 
         user = User.objects.get(email = device.name)
+        userbank = UserAccount.objects.get(user = user)
         token = Token.objects.get_or_create(user=user)[0]
 
-        asd = device.send_message({'type':'0','message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key}, delay_while_idle=True)
+        asd = device.send_message({'type':'0','message':'Ваше устройство успешно подтверждено!', 'auth_token':token.key, 'bank':userbank.bank}, delay_while_idle=True)
         print(asd)
         return HttpResponse('good')
     except:
