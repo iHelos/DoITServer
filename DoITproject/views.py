@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage, send_mail
 # Create your views here.
 from DoITproject.models import Task, WaitConfirm, UserAccount
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration, GCMToken, CreateTask, TaskSerializer
+    DeviceRegistration, GCMToken, CreateTask, TaskInputSerializer, TaskOutputSerializer
 
 
 class SignUp(APIView):
@@ -84,7 +84,7 @@ class TaskInDetail(APIView):
 
     def get(self, request, hash, format=None):
         task = self.get_object(hash, request.user)
-        task = TaskSerializer(task, many=True)
+        task = TaskInputSerializer(task, many=True)
         return Response(task.data)
 
 
@@ -115,7 +115,7 @@ class TaskOutDetail(APIView):
 
     def get(self, request, hash, format=None):
         task = self.get_object(hash, request.user)
-        task = TaskSerializer(task, many=True)
+        task = TaskOutputSerializer(task, many=True)
         return Response(task.data)
 
 

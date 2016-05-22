@@ -56,10 +56,23 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         task.save()
         return task
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskOutputSerializer(serializers.ModelSerializer):
+    #user = UserSerializer(source='user_reciever')
+    user = serializers.CharField(source='user_reciever.email')
+    hash = serializers.CharField(source='inputHash')
+
     class Meta:
         model = Task
-        fields = ('user_reciever', 'text', 'price')
+        fields = ('id', 'name', 'text', 'user', 'date', 'price', 'hash', 'isCompleted')
+
+class TaskInputSerializer(serializers.ModelSerializer):
+    #user = UserSerializer(source='user_creator')
+    user = serializers.CharField(source='user_creator.email')
+    hash = serializers.CharField(source='outputHash')
+
+    class Meta:
+        model = Task
+        fields = ('id', 'name', 'text', 'user', 'date', 'price', 'hash', 'isCompleted')
 
 class DeviceRegistration(serializers.Serializer):
     email = serializers.EmailField()
