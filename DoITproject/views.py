@@ -76,7 +76,7 @@ class TaskInDetail(APIView):
     """
     def get_object(self, hash, user):
         try:
-            checkpoint_task = Task.objects.get(user_creator = user, inputHash = hash)
+            checkpoint_task = Task.objects.get(user_reciever = user, inputHash = hash)
 
             return Task.objects.filter(id__gt = checkpoint_task.pk, user_creator = user)
         except Task.DoesNotExist:
