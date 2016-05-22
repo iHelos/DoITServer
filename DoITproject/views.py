@@ -59,10 +59,10 @@ class TaskCreate(APIView):
                 if len(device) == 0:
                     return Response({'detail': 'no devices'}, status=status.HTTP_400_BAD_REQUEST)
                 device.send_message(
-                    {'type':'1','id':task.id, 'title':task.name, 'text':task.text, 'user':task.user_creator.email, 'date':task.date, 'price':task.price},
+                    {'type':'1','id':task.id, 'title':task.name, 'text':task.text, 'user':task.user_creator.email, 'date':task.date, 'price':task.price, 'hash':task.inputHash},
                     delay_while_idle=True
                 )
-                return Response({'task': task.id})
+                return Response({'task': task.id, 'hash':task.outputHash})
             else:
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
         except:
