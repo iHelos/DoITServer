@@ -78,7 +78,7 @@ class TaskInDetail(APIView):
         try:
             checkpoint_task = Task.objects.get(user_reciever = user, inputHash = hash)
 
-            return Task.objects.filter(id__gt = checkpoint_task.pk, user_creator = user)
+            return Task.objects.filter(id__gt = checkpoint_task.pk, user_reciever = user)
         except Task.DoesNotExist:
             raise Http404
 
@@ -100,7 +100,7 @@ class AllTasksInDetail(APIView):
 
     def get(self, request, format=None):
         task = self.get_objects()
-        task = CreateTaskSerializer(task, many=True)
+        task = TaskInputSerializer(task, many=True)
         return Response(task.data)
 
 class TaskOutDetail(APIView):
@@ -131,7 +131,7 @@ class AllTasksOutDetail(APIView):
 
     def get(self, request, format=None):
         task = self.get_objects()
-        task = CreateTaskSerializer(task, many=True)
+        task = TaskOutputSerializer(task, many=True)
         return Response(task.data)
 
 # @receiver(signals.device_registered)
