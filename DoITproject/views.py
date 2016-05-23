@@ -110,7 +110,7 @@ class AllTasksInDetail(APIView):
     def get(self, request, format=None):
         task = self.get_objects()
         task = TaskInputSerializer(task, many=True)
-        return Response(task.data)
+        return Response({'tasks':task.data})
 
 class TaskOutDetail(APIView):
     """
@@ -149,7 +149,9 @@ class AllTasksOutDetail(APIView):
     def get(self, request, format=None):
         task = self.get_objects()
         task = TaskOutputSerializer(task, many=True)
-        return Response(task.data)
+        return Response({
+            'tasks':task.data
+        })
 
 
 class SetResult(APIView):
