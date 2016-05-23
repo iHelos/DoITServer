@@ -74,6 +74,7 @@ class TaskInputSerializer(serializers.ModelSerializer):
         model = Task
         fields = ('id', 'name', 'text', 'user', 'date', 'price', 'hash', 'isCompleted')
 
+
 class DeviceRegistration(serializers.Serializer):
     email = serializers.EmailField()
     reg_id = serializers.CharField()
@@ -86,7 +87,6 @@ class DeviceRegistration(serializers.Serializer):
         self.fields['email'].default_error_messages['invalid'] = u'1'
         self.fields['email'].default_error_messages['required'] = u'2'
 
-
     @transaction.atomic
     def create(self, validated_data):
 
@@ -98,7 +98,7 @@ class DeviceRegistration(serializers.Serializer):
 
         user = User.objects.filter(email = email)
         if(len(user) == 0):
-            user,userbank = create_user(email, password)
+            user, userbank = create_user(email, password)
 
         Device = get_device_model()
         # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
@@ -210,7 +210,6 @@ class CreateTask(serializers.Serializer):
         task.save()
         return task, ""
 
-
 @transaction.atomic
 def create_user (email, password = None):
     user = User(
@@ -219,7 +218,7 @@ def create_user (email, password = None):
                 password=password
             )
     user.save()
-    userbank = UserAccount(user = user, userbank=10000)
+    userbank = UserAccount(user = user, bank=1000)
     userbank.save()
     return user, userbank
 
