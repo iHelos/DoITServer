@@ -79,8 +79,8 @@ class TaskInDetail(APIView):
             checkpoint_task = Task.objects.get(user_reciever = user, inputHash = hash)
 
             return Task.objects.filter(id__gt = checkpoint_task.pk, user_reciever = user)
-        except:
-            return Response({'detail': traceback.format_exc()}, status=status.HTTP_400_BAD_REQUEST)
+        except Task.DoesNotExist:
+            raise Http404
 
     def get(self, request, hash, format=None):
         task = self.get_object(hash, request.user)
@@ -110,8 +110,8 @@ class TaskOutDetail(APIView):
     def get_object(self, hash, user):
         try:
             return Task.objects.filter(id__gt = Task.objects.get(user_creator = user, outputHash = hash).pk, user_creator = user)
-        except:
-            return Response({'detail': traceback.format_exc()}, status=status.HTTP_400_BAD_REQUEST)
+        except Task.DoesNotExist:
+            raise Http404
 
     def get(self, request, hash, format=None):
         task = self.get_object(hash, request.user)

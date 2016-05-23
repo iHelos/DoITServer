@@ -59,7 +59,7 @@ class CreateTaskSerializer(serializers.ModelSerializer):
 class TaskOutputSerializer(serializers.ModelSerializer):
     #user = UserSerializer(source='user_reciever')
     user = serializers.CharField(source='user_reciever.email')
-    hash = serializers.CharField(source='inputHash')
+    hash = serializers.CharField(source='outputHash')
 
     class Meta:
         model = Task
@@ -68,7 +68,7 @@ class TaskOutputSerializer(serializers.ModelSerializer):
 class TaskInputSerializer(serializers.ModelSerializer):
     #user = UserSerializer(source='user_creator')
     user = serializers.CharField(source='user_creator.email')
-    hash = serializers.CharField(source='outputHash')
+    hash = serializers.CharField(source='inputHash')
 
     class Meta:
         model = Task
