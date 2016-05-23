@@ -98,7 +98,7 @@ class DeviceRegistration(serializers.Serializer):
 
         user = User.objects.filter(email = email)
         if(len(user) == 0):
-            user, = create_user(email, password)
+            user,userbank = create_user(email, password)
 
         Device = get_device_model()
         # dev = Device.objects.filter(reg_id = validated_data['reg_id'])
