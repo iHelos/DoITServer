@@ -74,6 +74,13 @@ class TaskInputSerializer(serializers.ModelSerializer):
         model = Task
         fields = ('id', 'name', 'text', 'user', 'date', 'price', 'hash', 'isCompleted')
 
+class TaskCompleted(serializers.ModelSerializer):
+    #user = UserSerializer(source='user_creator')
+
+    class Meta:
+        model = Task
+        fields = ('id', 'isCompleted')
+
 
 class DeviceRegistration(serializers.Serializer):
     email = serializers.EmailField()

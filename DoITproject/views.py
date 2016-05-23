@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage, send_mail
 # Create your views here.
 from DoITproject.models import Task, WaitConfirm, UserAccount
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration, GCMToken, CreateTask, TaskInputSerializer, TaskOutputSerializer, TaskResult
+    DeviceRegistration, GCMToken, CreateTask, TaskInputSerializer, TaskOutputSerializer, TaskResult, TaskCompleted
 
 
 class SignUp(APIView):
@@ -78,14 +78,23 @@ class TaskInDetail(APIView):
         try:
             checkpoint_task = Task.objects.get(user_reciever = user, inputHash = hash)
 
-            return Task.objects.filter(id__gt = checkpoint_task.pk, user_reciever = user)
+            return Task.objects.filter(id__gt = checkpoint_task.pk, user_reciever = user), \
+                   Task.objects.filter(user_reciever = user, isCompleted = 1), \
+                   Task.objects.filter(user_reciever = user, isCompleted = -1)
+
         except Task.DoesNotExist:
             raise Http404
 
     def get(self, request, hash, format=None):
-        task = self.get_object(hash, request.user)
+        task, completed, failed = self.get_object(hash, request.user)
         task = TaskInputSerializer(task, many=True)
-        return Response(task.data)
+        completed = TaskCompleted(completed, many=True)
+        failed = TaskCompleted(failed, many=True)
+        return Response({
+            'tasks':task.data,
+            'completed':completed.data,
+            'failed':failed.data
+        })
 
 
 class AllTasksInDetail(APIView):
@@ -109,14 +118,22 @@ class TaskOutDetail(APIView):
     """
     def get_object(self, hash, user):
         try:
-            return Task.objects.filter(id__gt = Task.objects.get(user_creator = user, outputHash = hash).pk, user_creator = user)
+            return Task.objects.filter(id__gt = Task.objects.get(user_creator = user, outputHash = hash).pk, user_creator = user), \
+                   Task.objects.filter(user_creator = user, isCompleted = 1), \
+                   Task.objects.filter(user_creator = user, isCompleted = -1)
         except Task.DoesNotExist:
             raise Http404
 
     def get(self, request, hash, format=None):
-        task = self.get_object(hash, request.user)
+        task, completed, failed = self.get_object(hash, request.user)
         task = TaskOutputSerializer(task, many=True)
-        return Response(task.data)
+        completed = TaskCompleted(completed, many=True)
+        failed = TaskCompleted(failed, many=True)
+        return Response({
+            'tasks':task.data,
+            'completed':completed.data,
+            'failed':failed.data
+        })
 
 
 class AllTasksOutDetail(APIView):
