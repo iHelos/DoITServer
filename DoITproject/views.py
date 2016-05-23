@@ -123,8 +123,8 @@ class AllTasksInDetail(APIView):
         task = TaskInputSerializer(task, many=True)
         return Response({
             'tasks': task.data,
-            'completed': '[]',
-            'failed': '[]'
+            'completed': [],
+            'failed': []
         })
 
 
@@ -170,8 +170,8 @@ class AllTasksOutDetail(APIView):
         task = TaskOutputSerializer(task, many=True)
         return Response({
             'tasks': task.data,
-            'completed': '[]',
-            'failed': '[]'
+            'completed': [],
+            'failed': []
         })
 
 
