@@ -8,7 +8,7 @@ class Task(models.Model):
     price = models.IntegerField()
     user_creator = models.ForeignKey(User, related_name='creator')
     user_reciever = models.ForeignKey(User, related_name='reciever')
-    isCompleted = models.BooleanField()
+    isCompleted = models.IntegerField()
     date = models.CharField(max_length=10)
 
     inputHash = models.TextField()

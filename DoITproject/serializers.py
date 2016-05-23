@@ -138,6 +138,32 @@ class GCMToken(serializers.Serializer):
         user = User.objects.get(email = device.name)
         return user
 
+
+class TaskResult(serializers.Serializer):
+    task_id = serializers.IntegerField()
+    result = serializers.IntegerField()
+
+    @transaction.atomic
+    def create(self, validated_data):
+        user_creator = validated_data['owner']
+        task_id = validated_data['task_id']
+        result = validated_data['result']
+
+        Device = get_device_model()
+
+        task = Task.objects.get(id = task_id, user_creator=user_creator, isCompleted = 0)
+
+        bool_res = 1
+        if result<0:
+            bool_res = -1
+
+        task.isCompleted = bool_res
+        task.save()
+
+        devices = Device.objects.filter(name = task.user_reciever.email)
+
+        return devices, task
+
 class CreateTask(serializers.Serializer):
     title = serializers.CharField()
     text = serializers.CharField()

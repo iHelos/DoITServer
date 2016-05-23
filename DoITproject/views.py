@@ -18,7 +18,7 @@ from django.core.mail import EmailMessage, send_mail
 # Create your views here.
 from DoITproject.models import Task, WaitConfirm, UserAccount
 from DoITproject.serializers import UserSerializer, GroupSerializer, CreateUserSerializer, CreateTaskSerializer, \
-    DeviceRegistration, GCMToken, CreateTask, TaskInputSerializer, TaskOutputSerializer
+    DeviceRegistration, GCMToken, CreateTask, TaskInputSerializer, TaskOutputSerializer, TaskResult
 
 
 class SignUp(APIView):
@@ -133,6 +133,30 @@ class AllTasksOutDetail(APIView):
         task = self.get_objects()
         task = TaskOutputSerializer(task, many=True)
         return Response(task.data)
+
+
+class SetResult(APIView):
+    """
+    Регистрация устройства
+    """
+    serializer_class = TaskResult
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            devices, task = serializer.save(owner = request.user)
+            devices.send_message(
+                    {'type':'2','id':task.id, 'isCompleted':task.isCompleted},
+                    delay_while_idle=True
+                )
+            return Response({
+                'result': task.isCompleted
+            })
+        except:
+            traceback.print_exc()
+            raise Http404
+set_result = SetResult.as_view()
 
 # @receiver(signals.device_registered)
 # def my_callback(sender, **kwargs):
