@@ -70,6 +70,12 @@ class TaskCreate(APIView):
                      'date': task.date, 'price': task.price, 'hash': task.inputHash},
                     delay_while_idle=True
                 )
+                device = Device.objects.filter(name=task.user_creator.email)
+                device.send_message(
+                    {'type': '3', 'id': task.id, 'title': task.name, 'text': task.text, 'user': task.user_reciever.email,
+                     'date': task.date, 'price': task.price, 'hash': task.outputHash},
+                    delay_while_idle=True
+                )
                 return Response({'task': task.id, 'hash': task.outputHash})
             else:
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
@@ -192,6 +198,14 @@ class SetResult(APIView):
                 {'type': '2', 'id': task.id, 'isCompleted': task.isCompleted},
                 delay_while_idle=True
             )
+
+
+            Device = get_device_model()
+            device = Device.objects.filter(name=task.user_creator.email)
+            device.send_message(
+                    {'type': '4', 'id': task.id, 'isCompleted': task.isCompleted},
+                    delay_while_idle=True
+                )
             return Response({
                 'result': task.isCompleted
             })
