@@ -6,6 +6,8 @@ from django.core import signing
 from django.db import transaction
 from django.dispatch import receiver
 from django.http import Http404, HttpResponse
+from django.template import Context
+from django.template.loader import get_template, render_to_string
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
@@ -220,12 +222,16 @@ class DeviceRegistrationView(APIView):
             # if created:
             value = signing.dumps({device.dev_id: password})
 
+
             confirm_url = 'https://api.questmanager.ru/confirm/?pass={}'.format(value)
+            html_msg = render_to_string('email_html.html', {'url':confirm_url})
+
             send_mail('Регистрация QuestManager',
                       'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
                       'перейдите по данной ссылке:\n {}'.format(confirm_url),
                       'registration@questmanager.ru',
-                      [device.name], fail_silently=False)
+                      [device.name], fail_silently=False,
+                      html_message=html_msg)
             # else:
             #     value = signing.dumps({reg_id: password})
             #
