@@ -302,9 +302,9 @@ def confirm_registration(request):
             {'type': '0', 'message': 'Ваше устройство успешно подтверждено!', 'auth_token': token.key,
              'bank': userbank.bank}, delay_while_idle=True)
         print(asd)
-        return HttpResponse('good')
+        return HttpResponse(render_to_string('success.html', {'result': 'Success', 'color':'rgba(0, 255, 0, 0.5)'}))
     except:
-        return HttpResponse(traceback.format_exc())
+        return HttpResponse(render_to_string('success.html', {'result': 'Error', 'color':'rgba(255, 0, 0, 0.5)'}))
 
 
 @receiver(signals.device_registered)

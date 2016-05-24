@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href='http://fonts.googleapis.com/css?family=Quicksand:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <title></title>
+</head>
+<style>
+body {
+{#    background-color: #c4c4c4;#}
+    -webkit-perspective: 2000px;
+    perspective: 3000px;
+    padding-bottom: 100px;
+    transition: perspective 1s ease;
+}
+
+.container {
+    width: 1000px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 2em;
+    -webkit-transform: translateZ(-0px) rotateX(-20deg) rotateY(-15deg);
+    transform: translateZ(0px) rotateX(5deg) rotateY(20deg);
+{#    box-shadow: 50px 80px 50px rgba(148, 0, 0, 0.2);#}
+    -webkit-transition: -webkit-transform 1s ease;
+    transition: transform 1s ease;
+    outline: 1px solid transparent;
+}
+
+.clipped {
+    background: url(white.jpg) no-repeat center center;
+    background-size: cover;
+    color: #fff;
+    text-align: center;
+    padding: 2em;
+    /* -webkit-background-clip clips the background of the element to the text */
+    -webkit-text-fill-color: transparent; /* overrides the white text color in webkit browsers */
+    -webkit-background-clip: text;
+}
+
+.container h1 {
+    font: 10em/0.7 'Quicksand', sans-serif;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    cursor: default;
+    -webkit-transition: text-shadow 1s ease;
+    transition: text-shadow 1s ease;
+    color: #fff;
+    font-size: 16em;
+    font-weight: bold;
+    text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(0,0,0,.1), 0 1px 3px rgba(0,0,0,.3), 0 3px 5px rgba(0,0,0,.2), 0 5px 10px rgba(0,0,0,.25), 0 10px 10px rgba(0,0,0,.2), 0 20px 20px rgba(0,0,0,.15);
+}
+
+.container:hover {
+    text-shadow: none;
+    transform: translateZ(0px) rotateX(0deg) rotateY(0deg);
+}
+
+.container:hover h1 {
+    /*text-shadow: none;*/
+    text-shadow: 0 1px 0 {{ color }};
+}
+
+.container p {
+    margin: 3em 2em;
+    font-size: 1.25em;
+    color: #3d3b3a;
+}
+
+.container p span {
+    display: block;
+    color: #fff;
+    background: #3d3b3a;
+    letter-spacing: 2px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 0.4em 1em;
+    margin: 0 0 1.4em 0;
+}
+
+
+
+</style>
+<body>
+<div class="container">
+    <div class="clipped">
+        <h1 class = "elegantshadow">{{ result }}</h1>
+    </div>
+</div>
+</body>
+</html>
