@@ -63,8 +63,8 @@ class TaskCreate(APIView):
             if (task):
                 Device = get_device_model()
                 device = Device.objects.filter(name=task.user_reciever.email)
-                if len(device) == 0:
-                    return Response({'detail': 'no devices'}, status=status.HTTP_400_BAD_REQUEST)
+                # if len(device) == 0:
+                #     return Response({'detail': 'no devices'}, status=status.HTTP_400_BAD_REQUEST)
                 device.send_message(
                     {'type': '1', 'id': task.id, 'title': task.name, 'text': task.text, 'user': task.user_creator.email,
                      'date': task.date, 'price': task.price, 'hash': task.inputHash},
