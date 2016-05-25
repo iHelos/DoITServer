@@ -222,7 +222,7 @@ class CreateTask(serializers.Serializer):
         user_creator = validated_data['owner']
 
         user = User.objects.filter(email = email)
-        if len(user):
+        if len(user) == 0:
             return None, "3"
         user = User.objects.get(email = email)
         userbank = UserAccount.objects.get(user_id = user_creator.pk)
