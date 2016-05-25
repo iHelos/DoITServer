@@ -78,7 +78,7 @@ class TaskCreate(APIView):
                 )
 
                 send_bank(task.user_creator)
-                
+
                 return Response({'task': task.id, 'hash': task.outputHash})
             else:
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)

@@ -165,8 +165,7 @@ class TaskResult(serializers.Serializer):
             bool_res = -1
 
         if bool_res == 1:
-            user = User.objects.get(id = task.user_reciever)
-            bank = UserAccount.objects.get(user = user)
+            bank = UserAccount.objects.get(user = task.user_reciever)
             bank.bank += task.price
             bank.save()
         else:
