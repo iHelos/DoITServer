@@ -76,6 +76,9 @@ class TaskCreate(APIView):
                      'date': task.date, 'price': task.price, 'hash': task.outputHash},
                     delay_while_idle=True
                 )
+
+                send_bank(task.user_creator)
+                
                 return Response({'task': task.id, 'hash': task.outputHash})
             else:
                 return Response({'task': msg}, status=status.HTTP_400_BAD_REQUEST)
@@ -206,6 +209,10 @@ class SetResult(APIView):
                     {'type': '4', 'id': task.id, 'isCompleted': task.isCompleted},
                     delay_while_idle=True
                 )
+
+            send_bank(task.user_creator)
+            send_bank(task.user_reciever)
+
             return Response({
                 'result': task.isCompleted
             })
@@ -328,3 +335,12 @@ def my_callback(sender, device, request, **kwargs):
     print(device)
     print(request)
     print("Request finished!")
+
+
+def send_bank(user):
+    Device = get_device_model()
+    device = Device.objects.filter(name=user.email)
+
+    bank = UserAccount.objects.get(user = user)
+
+    device.send_message({'type': '5', 'bank': bank.bank}, delay_while_idle=True)
