@@ -222,7 +222,7 @@ class CreateTask(serializers.Serializer):
         user_creator = validated_data['owner']
 
         user = User.objects.get(email = email)
-        userbank = UserAccount.objects.get(user_id = user.pk)
+        userbank = UserAccount.objects.get(user_id = user_creator.pk)
 
         if userbank.bank < price:
             return None, "0"
