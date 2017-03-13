@@ -120,10 +120,10 @@ USE_TZ = True
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.mail.ru'
 EMAIL_PORT=2525
-EMAIL_HOST_USER='registration@questmanager.ru'
-DEFAULT_FROM_EMAIL = 'registration@questmanager.ru'
-SERVER_EMAIL = 'registration@questmanager.ru'
-EMAIL_HOST_PASSWORD='&O5PW8Fmefkp'
+EMAIL_HOST_USER='questmanager@ihelos.ru'
+DEFAULT_FROM_EMAIL = 'questmanager@ihelos.ru'
+SERVER_EMAIL = 'questmanager@ihelos.ru'
+EMAIL_HOST_PASSWORD='qblD.mIi0H9N'
 EMAIL_USE_TLS=True
 
 # Static files (CSS, JavaScript, Images)

@@ -38,7 +38,7 @@ class SignUp(APIView):
         serializer.is_valid(raise_exception=True)
         try:
             user = serializer.save()
-            send_mail('Subject here', 'Here is the message.', 'registration@questmanager.ru',
+            send_mail('Subject here', 'Here is the message.', 'questmanager@ihelos.ru',
                       ['ihelos.ermakov@gmail.com'], fail_silently=False)
             return Response({'result': 'check email'})
         except:
@@ -250,7 +250,7 @@ class DeviceRegistrationView(APIView):
             send_mail('Регистрация QuestManager',
                       'Ура, Вам остался всего лишь один шаг для подтверждения Вашего устройства - '
                       'перейдите по данной ссылке:\n {}'.format(confirm_url),
-                      'registration@questmanager.ru',
+                      'questmanager@ihelos.ru',
                       [device.name], fail_silently=False,
                       html_message=html_msg)
             # else:
