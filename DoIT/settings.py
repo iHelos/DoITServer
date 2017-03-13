@@ -95,8 +95,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DoIT',
         'USER': 'root',
-        'PASSWORD': 'bmstu185',
-        'HOST': '109.234.39.212',
+        'PASSWORD': 'Brotherhood',
+        'HOST': '78.155.207.46',
         'PORT': '3306',
         'CHARSET': 'UTF8'
     },
